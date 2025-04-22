@@ -1,0 +1,1004 @@
+<!doctype html>
+<html data-n-head-ssr>
+  <head>
+    <title>Gerador Aleatório de Ficha | Dungeons & Dragons</title>
+    <meta data-n-head="ssr" charset="utf-8">
+    <meta data-n-head="ssr" name="viewport" content="width=device-width, initial-scale=1">
+    <meta data-n-head="ssr" data-hid="description" name="description" content="Gerador de fichas de personagem para Dungeons & Dragons">
+    <meta data-n-head="ssr" data-hid="og:title" property="og:title" content="Gerador de Fichas | Dungeons & Dragons">
+    <meta data-n-head="ssr" data-hid="og:image" property="og:image" content="https://images.ctfassets.net/swt2dsco9mfe/2jKQC6i2BM1HNQIzau3Biv/01bee47c8170a7d7f3f54f79777c4f3e/158867_670x370.jpg">
+    <link data-n-head="ssr" rel="preconnect" href="https://fonts.googleapis.com">
+    <link data-n-head="ssr" rel="preconnect" crossorigin="crossorigin" href="https://fonts.gstatic.com">
+    <link data-n-head="ssr" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --black: #333;
+        --black-alpha10: rgba(0,0,0,0.1);
+        --black-alpha25: rgba(0,0,0,0.25);
+        --black-alpha50: rgba(0,0,0,0.5);
+        --black-alpha75: rgba(0,0,0,0.75);
+        --black-alpha90: rgba(0,0,0,0.9);
+        --white: #fff;
+        --white-alpha10: hsla(0,0%,100%,0.1);
+        --white-alpha25: hsla(0,0%,100%,0.25);
+        --white-alpha50: hsla(0,0%,100%,0.5);
+        --white-alpha75: hsla(0,0%,100%,0.75);
+        --white-alpha90: hsla(0,0%,100%,0.9);
+        --color-1: #ebebe6;
+        --color-2: #333;
+        --color-3: #9e0b0f;
+        --color-4: var(--color-3);
+        --color-5: #dfddd6;
+        --dnd-blue: #4c7de3;
+        --base-font-family: "DIN Next LT Pro", Arial, sans-serif;
+        --strong-font-family: "DIN Next LT Pro", Arial, sans-serif;
+        --max-container-width: 1340px;
+        --max-site-width: 1920px;
+        --html-background: var(--color-1);
+      }
+      
+      body {
+        background: var(--html-background);
+        font-family: var(--base-font-family);
+        color: var(--black);
+        margin: 0;
+        padding: 0;
+        font-size: 21px;
+        line-height: 1.47;
+      }
+      
+      /* Header Styles */
+      .site-header {
+        background: #e7e7db;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 4px solid #9d0a0e;
+      }
+      
+      .header-container {
+        max-width: var(--max-container-width);
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+      
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        height: 60px;
+      }
+      
+      .site-logo {
+        width: 124px;
+        height: 42px;
+        margin-right: 25px;
+      }
+      
+      .site-logo img {
+        width: 100%;
+        height: auto;
+      }
+      
+      .main-nav {
+        display: flex;
+        align-items: center;
+      }
+      
+      .nav-item {
+        padding: 0 15px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #5a5a5a;
+        transition: color .25s ease-in-out;
+      }
+      
+      .nav-item:hover {
+        color: var(--color-3);
+        text-decoration: none;
+      }
+      
+      /* Main Content Styles */
+      .main-container {
+        max-width: var(--max-container-width);
+        margin: 0 auto;
+        padding: 70px 15px;
+      }
+      
+      .hero-section {
+        background: url('https://images.ctfassets.net/swt2dsco9mfe/44zK1a6M3Stmw2fRVhkvDb/e3788c0fb5d6f1962038b468d557e605/dnd_home_phb_bannerv4.png') center/cover;
+        color: var(--white);
+        padding: 110px 0;
+        text-align: center;
+        position: relative;
+      }
+      
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+      }
+      
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      
+      .hero-title {
+        font-size: 72px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.2;
+      }
+      
+      .hero-description {
+        font-size: 24px;
+        margin-bottom: 40px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .generator-container {
+        background: var(--white);
+        padding: 50px;
+        margin-top: 60px;
+        box-shadow: 0 7px 59px 0 rgba(0,0,0,0.1);
+      }
+      
+      .section-title {
+        font-size: 42px;
+        margin-bottom: 30px;
+        color: var(--color-3);
+        position: relative;
+      }
+      
+      .section-title:after {
+        content: "";
+        display: block;
+        width: 100px;
+        height: 4px;
+        background: var(--color-3);
+        margin-top: 10px;
+      }
+      
+      .character-sheet {
+        background: var(--white);
+        border: 2px solid var(--color-3);
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      }
+      
+      .generate-btn {
+        --button-crop-size: 16px;
+        align-items: center;
+        cursor: pointer;
+        display: inline-flex;
+        justify-content: center;
+        min-height: 64px;
+        vertical-align: middle;
+        padding: 15px 42px;
+        color: var(--white);
+        font-family: inherit;
+        font-size: 16px;
+        letter-spacing: 2.26px;
+        line-height: 1;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: #9e0b0f;
+        background-image: linear-gradient(90deg, #9e0b0f, #ce1016);
+        border: 2px solid #e61720;
+        border-radius: 0;
+        text-align: center;
+        text-decoration: none;
+        transition: .1s ease-out;
+        position: relative;
+        clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--button-crop-size)), calc(100% - var(--button-crop-size)) 100%, 0 100%);
+      }
+      
+      .generate-btn:hover {
+        filter: brightness(110%);
+        color: var(--white);
+        text-decoration: none;
+      }
+      
+      .attr-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      
+      .attr-table td {
+        padding: 15px;
+        text-align: center;
+        border: 1px solid var(--color-5);
+        font-size: 18px;
+      }
+      
+      .skills-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      
+      .skills-table td {
+        padding: 12px;
+        border: 1px solid var(--color-5);
+        font-size: 16px;
+      }
+      
+      .skill-name {
+        font-weight: 600;
+      }
+      
+      .personality-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      
+      .personality-list li {
+        margin-bottom: 15px;
+        padding-left: 25px;
+        position: relative;
+        font-size: 18px;
+      }
+      
+      .personality-list li:before {
+        content: "•";
+        color: var(--color-3);
+        font-weight: bold;
+        font-size: 24px;
+        position: absolute;
+        left: 0;
+        top: -2px;
+      }
+      
+      .character-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      
+      .character-header h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        color: var(--color-3);
+      }
+      
+      .character-header h2 {
+        font-size: 1.8rem;
+        color: var(--black);
+        margin-top: 0;
+      }
+      
+      .character-header h3 {
+        font-size: 1.5rem;
+        color: var(--black);
+        margin: 10px 0;
+      }
+      
+      .hit-points, .armor-class {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 20px 0;
+        display: inline-block;
+        padding: 10px 20px;
+        background: var(--color-1);
+        border: 2px solid var(--color-3);
+      }
+      
+      .abilities-list {
+        column-count: 2;
+        margin: 30px 0;
+        font-size: 18px;
+      }
+      
+      .abilities-list li {
+        margin-bottom: 15px;
+        break-inside: avoid;
+      }
+      
+      /* Footer Styles */
+      .site-footer {
+        background: #0b0b0b;
+        color: var(--white);
+        padding: 70px 0 0;
+        border-top: 1px solid #1f1f1f;
+      }
+      
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 px;
+      }
+      
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+        margin-bottom: 60px;
+      }
+      
+      .footer-section-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        position: relative;
+      }
+      
+      .footer-section-title:after {
+        content: "";
+        display: block;
+        width: 100px;
+        height: 2px;
+        background: linear-gradient(90deg, #000 1%, #9d0a0e 52%, #000);
+        margin-top: 10px;
+      }
+      
+      .footer-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .footer-links li {
+        margin-bottom: 12px;
+      }
+      
+      .footer-links a {
+        color: var(--white);
+        text-decoration: none;
+        font-size: 16px;
+        transition: color .25s ease-in-out;
+      }
+      
+      .footer-links a:hover {
+        color: var(--dnd-blue);
+      }
+      
+      .footer-bottom {
+        background: #242424;
+        padding: 20px 0;
+        text-align: center;
+      }
+      
+      .footer-bottom p {
+        margin: 0;
+        font-size: 14px;
+        color: #989898;
+      }
+      
+      .brand-logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        margin: 30px 0;
+      }
+      
+      .brand-logos img {
+        height: 50px;
+        width: auto;
+      }
+      
+      @media (max-width: 1024px) {
+        .hero-title {
+          font-size: 52px;
+        }
+        
+        .footer-content {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 42px;
+        }
+        
+        .hero-description {
+          font-size: 20px;
+        }
+        
+        .footer-content {
+          display: grid;
+         grid-template-columns: repeat(4, 1fr); /* 4 colunas iguais */
+         gap: 20px; /* Espaçamento menor entre os itens */
+         margin-bottom: 40px; /* Reduzi a margem inferior */
+        text-align: center; /* Centraliza o conteúdo dentro de cada seção */
+        }
+        
+        .abilities-list {
+          column-count: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-container">
+        <div class="header-content">
+          <div class="site-logo">
+            <a href="/">
+              <img 
+            src="https://images.ctfassets.net/swt2dsco9mfe/1qU2YMq2MSczf9KGme5gu7/a580e2f158f2c08faad3a9d4463af0bc/dnd-hub-logo.png?fm=avif" 
+            alt="Dungeons & Dragons"
+            class="logo-image"> <!-- Adicione uma classe específica para a imagem -->
+        </a>
+      </div>
+      <nav class="main-nav">
+        <!-- Seu menu aqui -->
+      </nav>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header-content {
+  display: flex;
+  justify-content: space-between; /* Logo à esquerda, menu à direita */
+  align-items: center; /* Alinha verticalmente */
+}
+
+.site-logo {
+  margin: 0 auto; /* Centraliza a logo horizontalmente */
+}
+
+.logo-image {
+  max-height: 80px;
+  width: auto;
+}
+</style>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">Gerador de Fichas de Personagem</h1>
+        <p class="hero-description">Crie seu herói personalizado para aventuras em Dungeons & Dragons com nosso gerador aleatório de fichas de personagem.</p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-container">
+      <div class="generator-container">
+        <h2 class="section-title">Gerador Aleatório</h2>
+        <p>Clique no botão abaixo para gerar uma ficha de personagem completamente aleatória para Dungeons & Dragons:</p>
+        
+        <button class="generate-btn" onclick="generateRandomCharacter()">GERAR PERSONAGEM ALEATÓRIO</button>
+        
+        <div id="character-sheet" class="character-sheet" style="display: none;">
+          <div class="character-header">
+            <h1 id="sheet-name">Nome do Personagem</h1>
+            <h2 id="sheet-race-class">Raça e Classe</h2>
+            <h3 id="sheet-background">Antecedente</h3>
+            <div class="hit-points">Pontos de Vida: <span id="sheet-hp"></span></div>
+            <div class="armor-class">Classe de Armadura: <span id="sheet-ac"></span></div>
+          </div>
+          
+          <h3 class="section-title">Atributos</h3>
+          <table class="attr-table">
+            <tr>
+              <td>FOR: <small id="sheet-str-value">10</small> (<strong id="sheet-str-mod">+0</strong>)</td>
+              <td>DES: <small id="sheet-dex-value">10</small> (<strong id="sheet-dex-mod">+0</strong>)</td>
+              <td>CON: <small id="sheet-con-value">10</small> (<strong id="sheet-con-mod">+0</strong>)</td>
+            </tr>
+            <tr>
+              <td>INT: <small id="sheet-int-value">10</small> (<strong id="sheet-int-mod">+0</strong>)</td>
+              <td>SAB: <small id="sheet-wis-value">10</small> (<strong id="sheet-wis-mod">+0</strong>)</td>
+              <td>CAR: <small id="sheet-cha-value">10</small> (<strong id="sheet-cha-mod">+0</strong>)</td>
+            </tr>
+          </table>
+          
+          <h3 class="section-title">Perícias</h3>
+          <table class="skills-table" id="skills-display">
+            <!-- Skills will be inserted here by JavaScript -->
+          </table>
+          
+          <h3 class="section-title">Habilidades e Magias</h3>
+          <ul class="abilities-list" id="abilities-display">
+            <!-- Abilities will be inserted here by JavaScript -->
+          </ul>
+          
+          <h3 class="section-title">Personalidade</h3>
+          <ul class="personality-list">
+            <li><b>Traço de Personalidade:</b> <span id="sheet-personality-trait"></span></li>
+            <li><b>Ideais:</b> <span id="sheet-ideal"></span></li>
+            <li><b>Vínculo:</b> <span id="sheet-bond"></span></li>
+            <li><b>Defeito:</b> <span id="sheet-flaw"></span></li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3 class="footer-section-title">Camille Quaresma</h3>
+      </div>
+      
+      <div class="footer-section">
+        <h3 class="footer-section-title">Henry Caralho</h3>
+      </div>
+      
+      <div class="footer-section">
+        <h3 class="footer-section-title">Lohan não sei das quantas</h3>
+      </div>
+
+      <div class="footer-section">
+        <h3 class="footer-section-title">Luiz Fodão</h3>
+      </div>
+    </div>
+    
+  
+  <div class="footer-bottom">
+    <div class="footer-container">
+      <p>© 2025<p>
+      <p>Trabalho de Tecnologia Web</p>
+    </div>
+  </div>
+</footer>
+
+    <script>
+      // Database of names, races, classes, etc.
+      const names = {
+        male: ["Aragorn", "Boromir", "Gandalf", "Legolas", "Gimli", "Frodo", "Sam", "Merry", "Pippin", "Thorin", "Bilbo"],
+        female: ["Arwen", "Galadriel", "Eowyn", "Rosie", "Lobelia", "Belladonna", "Primula", "Dís", "Hilda", "Sigrid", "Tauriel"]
+      };
+      
+      const races = [
+        { name: "Humano", bonuses: { any: 1 }, speed: 30 },
+        { name: "Elfo", bonuses: { dex: 2 }, speed: 30, darkvision: true },
+        { name: "Anão", bonuses: { con: 2 }, speed: 25, darkvision: true },
+        { name: "Halfling", bonuses: { dex: 2 }, speed: 25 },
+        { name: "Draconato", bonuses: { str: 2, cha: 1 }, speed: 30 },
+        { name: "Gnomo", bonuses: { int: 2 }, speed: 25, darkvision: true },
+        { name: "Meio-Elfo", bonuses: { cha: 2, any: 2 }, speed: 30, darkvision: true },
+        { name: "Meio-Orc", bonuses: { str: 2, con: 1 }, speed: 30, darkvision: true },
+        { name: "Tiefling", bonuses: { cha: 2, int: 1 }, speed: 30, darkvision: true }
+      ];
+      
+      const classes = [
+        { 
+          name: "Bárbaro", 
+          primary: "str", 
+          secondary: "con",
+          hitDice: 12,
+          armor: ["Light", "Medium", "Shields"],
+          weapons: ["Simple", "Martial"],
+          abilities: ["Fúria", "Defesa sem Armadura", "Ataque Frenético"],
+          spells: false
+        },
+        { 
+          name: "Bardo", 
+          primary: "cha", 
+          secondary: "dex",
+          hitDice: 8,
+          armor: ["Light"],
+          weapons: ["Simple", "Hand Crossbows", "Longswords", "Rapiers", "Shortswords"],
+          abilities: ["Inspiração Bardica", "Canção de Descanso", "Palavras Mágicas"],
+          spells: true,
+          spellAbility: "cha"
+        },
+        { 
+          name: "Clérigo", 
+          primary: "wis", 
+          secondary: "con",
+          hitDice: 8,
+          armor: ["Light", "Medium", "Shields"],
+          weapons: ["Simple"],
+          abilities: ["Domínio Divino", "Canalizar Divindade", "Turn Undead"],
+          spells: true,
+          spellAbility: "wis"
+        },
+        { 
+          name: "Druida", 
+          primary: "wis", 
+          secondary: "con",
+          hitDice: 8,
+          armor: ["Light", "Medium", "Shields"],
+          weapons: ["Simple"],
+          abilities: ["Forma Selvagem", "Companheiro Animal", "Conjuração Natural"],
+          spells: true,
+          spellAbility: "wis"
+        },
+        { 
+          name: "Guerreiro", 
+          primary: "str", 
+          secondary: "con",
+          hitDice: 10,
+          armor: ["All"],
+          weapons: ["Simple", "Martial"],
+          abilities: ["Estilo de Combate", "Segundo Fôlego", "Ação Extra"],
+          spells: false
+        },
+        { 
+          name: "Ladino", 
+          primary: "dex", 
+          secondary: "int",
+          hitDice: 8,
+          armor: ["Light"],
+          weapons: ["Simple", "Hand Crossbows", "Longswords", "Rapiers", "Shortswords"],
+          abilities: ["Ataque Furtivo", "Esquiva", "Evasion"],
+          spells: false
+        },
+        { 
+          name: "Mago", 
+          primary: "int", 
+          secondary: "con",
+          hitDice: 6,
+          armor: ["None"],
+          weapons: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light Crossbows"],
+          abilities: ["Conjuração Arcana", "Recuperação Arcana", "Especialização em Escola"],
+          spells: true,
+          spellAbility: "int"
+        },
+        { 
+          name: "Monge", 
+          primary: "dex", 
+          secondary: "wis",
+          hitDice: 8,
+          armor: ["None"],
+          weapons: ["Simple", "Shortswords"],
+          abilities: ["Defesa sem Armadura", "Artes Marciais", "Ki"],
+          spells: false
+        },
+        { 
+          name: "Paladino", 
+          primary: "str", 
+          secondary: "cha",
+          hitDice: 10,
+          armor: ["All"],
+          weapons: ["Simple", "Martial"],
+          abilities: ["Cura pelas Mãos", "Aura de Proteção", "Juramento Sagrado"],
+          spells: true,
+          spellAbility: "cha"
+        },
+        { 
+          name: "Patrulheiro", 
+          primary: "dex", 
+          secondary: "wis",
+          hitDice: 10,
+          armor: ["Light", "Medium", "Shields"],
+          weapons: ["Simple", "Martial"],
+          abilities: ["Inimigo Favorecido", "Explorador Natural", "Estilo de Combate"],
+          spells: true,
+          spellAbility: "wis"
+        },
+        { 
+          name: "Feiticeiro", 
+          primary: "cha", 
+          secondary: "con",
+          hitDice: 6,
+          armor: ["None"],
+          weapons: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light Crossbows"],
+          abilities: ["Magia de Sangue", "Metamagia", "Origem Arcana"],
+          spells: true,
+          spellAbility: "cha"
+        },
+        { 
+          name: "Bruxo", 
+          primary: "cha", 
+          secondary: "con",
+          hitDice: 8,
+          armor: ["Light"],
+          weapons: ["Simple"],
+          abilities: ["Pacto Mágico", "Invocações", "Patrono"],
+          spells: true,
+          spellAbility: "cha"
+        }
+      ];
+      
+      const backgrounds = [
+        "Acólito", "Artesão", "Artista", "Charlatão", "Criminoso", 
+        "Eremita", "Forasteiro", "Herói do Povo", "Marinheiro", 
+        "Nobre", "Órfão", "Sábio", "Soldado"
+      ];
+      
+      const personalityTraits = [
+        "Sempre curioso e questionador",
+        "Adora contar histórias e piadas",
+        "Extremamente leal aos amigos",
+        "Sempre procura o lado bom das coisas",
+        "Gosta de planejar tudo com cuidado",
+        "Age primeiro, pensa depois",
+        "Fala pouco, mas observa muito",
+        "Sempre desconfiado de estranhos"
+      ];
+      
+      const ideals = [
+        "Justiça acima de tudo",
+        "Liberdade para todos",
+        "Poder é o que importa",
+        "Conhecimento deve ser compartilhado",
+        "Tradições devem ser preservadas",
+        "Todos merecem uma segunda chance"
+      ];
+      
+      const bonds = [
+        "Proteger minha família acima de tudo",
+        "Vingar a morte de meu mestre",
+        "Proteger um artefato sagrado",
+        "Cumprir um juramento antigo",
+        "Encontrar meu verdadeiro propósito",
+        "Proteger meus companheiros de grupo"
+      ];
+      
+      const flaws = [
+        "Confio em qualquer um muito facilmente",
+        "Sou extremamente ganancioso",
+        "Tenho medo de tomar decisões",
+        "Sou muito orgulhoso",
+        "Não consigo guardar segredos",
+        "Sou muito impulsivo"
+      ];
+      
+      const spellsByClass = {
+        "Bardo": ["Cura Ferimentos", "Encantar Pessoa", "Dissipar Magia", "Sugestão"],
+        "Clérigo": ["Curar Ferimentos", "Proteção contra o Mal", "Revivificar", "Restauração Menor"],
+        "Druida": ["Chamas da Fênix", "Cura Ferimentos", "Falar com Animais", "Transformação de Pedra"],
+        "Paladino": ["Cura Ferimentos", "Proteção contra o Mal e Bem", "Ataque Guiado", "Destruir Mortos-Vivos"],
+        "Patrulheiro": ["Cura Ferimentos", "Passos sem Rastro", "Flecha Guiada", "Proteção contra Veneno"],
+        "Mago": ["Bola de Fogo", "Raio Arcano", "Escudo Mágico", "Teletransporte"],
+        "Feiticeiro": ["Bola de Fogo", "Raio Arcano", "Névoa Obscurecente", "Sugestão"],
+        "Bruxo": ["Eldritch Blast", "Armadura de Agathys", "Invisibilidade", "Controle de Mortos-Vivos"]
+      };
+      
+      function calculateModifier(score) {
+        return Math.floor((score - 10) / 2);
+      }
+      
+      function formatModifier(mod) {
+        return mod >= 0 ? `+${mod}` : mod;
+      }
+      
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      
+      function generateRandomStats(primary, secondary) {
+        // Generate base stats (4d6 drop lowest)
+        const stats = [];
+        for (let i = 0; i < 6; i++) {
+          const rolls = [
+            getRandomInt(1, 6),
+            getRandomInt(1, 6),
+            getRandomInt(1, 6),
+            getRandomInt(1, 6)
+          ];
+          rolls.sort((a, b) => a - b);
+          stats.push(rolls[1] + rolls[2] + rolls[3]);
+        }
+        
+        // Assign stats based on class needs
+        stats.sort((a, b) => b - a);
+        
+        const result = {
+          str: 10,
+          dex: 10,
+          con: 10,
+          int: 10,
+          wis: 10,
+          cha: 10
+        };
+        
+        // Assign primary and secondary stats
+        result[primary] = stats[0];
+        result[secondary] = stats[1];
+        
+        // Assign remaining stats
+        const remainingStats = ["str", "dex", "con", "int", "wis", "cha"]
+          .filter(stat => stat !== primary && stat !== secondary);
+        
+        for (let i = 0; i < remainingStats.length; i++) {
+          result[remainingStats[i]] = stats[i + 2];
+        }
+        
+        return result;
+      }
+      
+      function getRandomProficiencies(characterClass) {
+        const allSkills = [
+          "Acrobacia", "Adestrar Animais", "Arcanismo", "Atletismo", 
+          "Enganação", "História", "Intuição", "Intimidação", 
+          "Investigação", "Medicina", "Natureza", "Percepção", 
+          "Atuação", "Persuasão", "Religião", "Prestidigitação", 
+          "Furtividade", "Sobrevivência"
+        ];
+        
+        // Number of skills based on class
+        let numSkills;
+        if (["Bardo", "Ladino", "Patrulheiro"].includes(characterClass)) {
+          numSkills = 4;
+        } else if (["Clérigo", "Druida", "Monge", "Bruxo"].includes(characterClass)) {
+          numSkills = 2;
+        } else {
+          numSkills = 2;
+        }
+        
+        // Get random skills
+        const shuffled = [...allSkills].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, numSkills);
+      }
+      
+      function generateRandomCharacter() {
+        // Random gender and name
+        const gender = Math.random() < 0.5 ? "male" : "female";
+        const name = names[gender][getRandomInt(0, names[gender].length - 1)];
+        
+        // Random race
+        const race = races[getRandomInt(0, races.length - 1)];
+        
+        // Random class
+        const characterClass = classes[getRandomInt(0, classes.length - 1)];
+        
+        // Random background
+        const background = backgrounds[getRandomInt(0, backgrounds.length - 1)];
+        
+        // Generate stats based on class
+        const baseStats = generateRandomStats(characterClass.primary, characterClass.secondary);
+        
+        // Apply race bonuses
+        const finalStats = {...baseStats};
+        for (const [stat, bonus] of Object.entries(race.bonuses)) {
+          if (stat === "any") {
+            // Apply to any stat (randomly choose one)
+            const stats = ["str", "dex", "con", "int", "wis", "cha"];
+            const randomStat = stats[getRandomInt(0, stats.length - 1)];
+            finalStats[randomStat] += bonus;
+          } else {
+            finalStats[stat] += bonus;
+          }
+        }
+        
+        // Calculate HP (assuming level 1)
+        const hp = characterClass.hitDice + calculateModifier(finalStats.con);
+        
+        // Calculate AC (assuming no armor and using dex)
+        let ac = 10 + calculateModifier(finalStats.dex);
+        // If class has Unarmored Defense
+        if (["Bárbaro", "Monge"].includes(characterClass.name)) {
+          if (characterClass.name === "Bárbaro") {
+            ac = 10 + calculateModifier(finalStats.dex) + calculateModifier(finalStats.con);
+          } else { // Monk
+            ac = 10 + calculateModifier(finalStats.dex) + calculateModifier(finalStats.wis);
+          }
+        }
+        
+        // Get random proficiencies
+        const proficiencies = getRandomProficiencies(characterClass.name);
+        
+        // Get random personality traits
+        const personalityTrait = personalityTraits[getRandomInt(0, personalityTraits.length - 1)];
+        const ideal = ideals[getRandomInt(0, ideals.length - 1)];
+        const bond = bonds[getRandomInt(0, bonds.length - 1)];
+        const flaw = flaws[getRandomInt(0, flaws.length - 1)];
+        
+        // Get spells if applicable
+        let abilitiesList = [...characterClass.abilities];
+        if (characterClass.spells && spellsByClass[characterClass.name]) {
+          const spells = spellsByClass[characterClass.name];
+          const numSpells = getRandomInt(2, 4);
+          const selectedSpells = [];
+          
+          for (let i = 0; i < numSpells; i++) {
+            const randomSpell = spells[getRandomInt(0, spells.length - 1)];
+            if (!selectedSpells.includes(randomSpell)) {
+              selectedSpells.push(randomSpell);
+            }
+          }
+          
+          abilitiesList = abilitiesList.concat(selectedSpells.map(spell => `Magia: ${spell}`));
+        }
+        
+        // Display the character sheet
+        document.getElementById('sheet-name').textContent = name;
+        document.getElementById('sheet-race-class').textContent = 
+          `${race.name} ${characterClass.name}`;
+        document.getElementById('sheet-background').textContent = background;
+        document.getElementById('sheet-hp').textContent = hp;
+        document.getElementById('sheet-ac').textContent = ac;
+        
+        // Attributes
+        document.getElementById('sheet-str-value').textContent = finalStats.str;
+        document.getElementById('sheet-dex-value').textContent = finalStats.dex;
+        document.getElementById('sheet-con-value').textContent = finalStats.con;
+        document.getElementById('sheet-int-value').textContent = finalStats.int;
+        document.getElementById('sheet-wis-value').textContent = finalStats.wis;
+        document.getElementById('sheet-cha-value').textContent = finalStats.cha;
+        
+        document.getElementById('sheet-str-mod').textContent = formatModifier(calculateModifier(finalStats.str));
+        document.getElementById('sheet-dex-mod').textContent = formatModifier(calculateModifier(finalStats.dex));
+        document.getElementById('sheet-con-mod').textContent = formatModifier(calculateModifier(finalStats.con));
+        document.getElementById('sheet-int-mod').textContent = formatModifier(calculateModifier(finalStats.int));
+        document.getElementById('sheet-wis-mod').textContent = formatModifier(calculateModifier(finalStats.wis));
+        document.getElementById('sheet-cha-mod').textContent = formatModifier(calculateModifier(finalStats.cha));
+        
+        // Skills
+        const skillsTable = document.getElementById('skills-display');
+        skillsTable.innerHTML = '';
+        
+        const allSkills = [
+          { name: "Acrobacia", attr: "dex" },
+          { name: "Adestrar Animais", attr: "wis" },
+          { name: "Arcanismo", attr: "int" },
+          { name: "Atletismo", attr: "str" },
+          { name: "Enganação", attr: "cha" },
+          { name: "História", attr: "int" },
+          { name: "Intuição", attr: "wis" },
+          { name: "Intimidação", attr: "cha" },
+          { name: "Investigação", attr: "int" },
+          { name: "Medicina", attr: "wis" },
+          { name: "Natureza", attr: "int" },
+          { name: "Percepção", attr: "wis" },
+          { name: "Atuação", attr: "cha" },
+          { name: "Persuasão", attr: "cha" },
+          { name: "Religião", attr: "int" },
+          { name: "Prestidigitação", attr: "dex" },
+          { name: "Furtividade", attr: "dex" },
+          { name: "Sobrevivência", attr: "wis" }
+        ];
+        
+        let currentRow;
+        allSkills.forEach((skill, index) => {
+          if (index % 2 === 0) {
+            currentRow = document.createElement('tr');
+            skillsTable.appendChild(currentRow);
+          }
+          
+          const isProficient = proficiencies.includes(skill.name);
+          const attrMod = calculateModifier(finalStats[skill.attr]);
+          const total = isProficient ? attrMod + 2 : attrMod; // Assuming proficiency bonus of +2
+          
+          const cell1 = document.createElement('td');
+          cell1.className = 'skill-name';
+          cell1.textContent = skill.name;
+          
+          const cell2 = document.createElement('td');
+          cell2.className = 'score';
+          cell2.textContent = formatModifier(total);
+          
+          if (isProficient) {
+            cell1.style.fontWeight = 'bold';
+            cell1.textContent = skill.name + " (P)";
+          }
+          
+          currentRow.appendChild(cell1);
+          currentRow.appendChild(cell2);
+        });
+        
+        // Abilities and spells
+        const abilitiesDisplay = document.getElementById('abilities-display');
+        abilitiesDisplay.innerHTML = '';
+        
+        abilitiesList.forEach(ability => {
+          const li = document.createElement('li');
+          li.textContent = ability;
+          abilitiesDisplay.appendChild(li);
+        });
+        
+        // Personality
+        document.getElementById('sheet-personality-trait').textContent = personalityTrait;
+        document.getElementById('sheet-ideal').textContent = ideal;
+        document.getElementById('sheet-bond').textContent = bond;
+        document.getElementById('sheet-flaw').textContent = flaw;
+        
+        // Show the sheet
+        document.getElementById('character-sheet').style.display = 'block';
+        
+        // Scroll to the sheet
+        document.getElementById('character-sheet').scrollIntoView({ behavior: 'smooth' });
+      }
+    </script>
+  </body>
+</html>
