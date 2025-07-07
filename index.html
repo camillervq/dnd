@@ -3,771 +3,922 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz de Gêneros Textuais</title>
+    <title>Quiz - Gêneros Textuais</title>
     <style>
-        :root {
-            --primary: #4a6fa5;
-            --secondary: #166088;
-            --accent: #4fc3f7;
-            --correct: #4caf50;
-            --wrong: #f44336;
-            --light: #f8f9fa;
-            --dark: #343a40;
+        @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--dark);
             background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow-x: hidden;
         }
         
         .container {
+            width: 90%;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-        
-        header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--accent);
         }
         
         h1 {
-            color: var(--primary);
-            margin-bottom: 10px;
+            color: #58a700;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         
-        .intro {
-            font-size: 1.1em;
+        .start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            animation: fadeIn 1s ease;
+        }
+        
+        .start-screen p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
             color: #555;
-            margin-bottom: 20px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .start-btn {
+            background-color: #58a700;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .start-btn:hover {
+            background-color: #4d9500;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
         
         .quiz-container {
             display: none;
+            width: 100%;
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .quiz-container.active {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .question {
-            background-color: var(--light);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        .question-text {
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            color: var(--secondary);
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #333;
+            font-weight: 500;
+            line-height: 1.4;
         }
         
         .options {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
         }
         
         .option {
-            padding: 12px 15px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            background-color: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 1.1rem;
         }
         
         .option:hover {
             background-color: #f0f0f0;
-            border-color: var(--accent);
+            border-color: #ccc;
+        }
+        
+        .option.selected {
+            background-color: #e0e0e0;
+            border-color: #aaa;
         }
         
         .option.correct {
-            background-color: var(--correct);
-            color: white;
-            border-color: var(--correct);
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
         }
         
-        .option.wrong {
-            background-color: var(--wrong);
-            color: white;
-            border-color: var(--wrong);
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
         }
         
-        .feedback {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
-        
-        .feedback.correct {
-            background-color: #e8f5e9;
-            color: var(--correct);
-            border-left: 4px solid var(--correct);
-        }
-        
-        .feedback.wrong {
-            background-color: #ffebee;
-            color: var(--wrong);
-            border-left: 4px solid var(--wrong);
-        }
-        
-        .navigation {
+        .controls {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            align-items: center;
         }
         
-        button {
-            padding: 10px 20px;
-            background-color: var(--primary);
-            color: white;
+        .confirm-btn, .finish-btn, .next-btn {
+            padding: 12px 25px;
+            border-radius: 50px;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
         
-        button:hover {
-            background-color: var(--secondary);
+        .confirm-btn {
+            background-color: #58a700;
+            color: white;
         }
         
-        button:disabled {
+        .confirm-btn:hover {
+            background-color: #4d9500;
+        }
+        
+        .confirm-btn:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
         }
         
-        .start-btn {
-            display: block;
-            margin: 0 auto;
-            padding: 12px 30px;
-            font-size: 1.2em;
+        .finish-btn {
+            background-color: #dc3545;
+            color: white;
         }
         
-        .progress {
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-            color: var(--secondary);
+        .finish-btn:hover {
+            background-color: #c82333;
         }
         
-        .results {
+        .next-btn {
+            background-color: #007bff;
+            color: white;
             display: none;
-            text-align: center;
-            padding: 30px;
         }
         
-        .results h2 {
-            color: var(--primary);
+        .next-btn:hover {
+            background-color: #0069d9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 10px;
             margin-bottom: 20px;
+            height: 10px;
+            overflow: hidden;
         }
         
-        .score {
-            font-size: 1.5em;
-            margin-bottom: 20px;
+        .progress-bar {
+            height: 100%;
+            background-color: #58a700;
+            width: 0%;
+            transition: width 0.3s ease;
         }
         
-        .improvement {
-            background-color: #fff8e1;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid #ffc107;
-        }
-        
-        .genre-stats {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        
-        .genre-stat {
-            background-color: var(--light);
-            padding: 15px;
-            border-radius: 8px;
-            width: 45%;
+        .question-counter {
+            color: #6c757d;
             margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 0.9rem;
+        }
+        
+        .result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+            animation: fadeIn 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-screen h2 {
+            color: #58a700;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .result-screen p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #333;
         }
         
         .restart-btn {
-            margin-top: 30px;
+            background-color: #58a700;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px;
-                padding: 15px;
+        .restart-btn:hover {
+            background-color: #4d9500;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: fall 5s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
             }
-            
-            .genre-stat {
-                width: 100%;
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
             }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #58a700;
+            margin: 20px 0;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #58a700;
+            display: none;
+            text-align: left;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .category-tag {
+            display: inline-block;
+            background-color: #e9f5db;
+            color: #58a700;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Quiz de Gêneros Textuais</h1>
-            <p class="intro">Teste seus conhecimentos sobre bilhetes, cartas, notícias e receitas!</p>
-        </header>
+        <h1>Quiz de Gêneros Textuais</h1>
         
-        <div id="start-screen">
-            <button id="start-btn" class="start-btn">Iniciar Quiz</button>
+        <div class="start-screen" id="startScreen">
+            <p>Teste seus conhecimentos sobre gêneros textuais! Este quiz contém 30 perguntas divididas em três partes: conceitos básicos, diferenças entre tipos e gêneros, e exemplos práticos.</p>
+            <button class="start-btn" id="startBtn">Iniciar Quiz</button>
         </div>
         
-        <div id="quiz-container" class="quiz-container">
-            <div class="progress">Questão <span id="current-question">1</span> de <span id="total-questions">40</span></div>
-            
-            <div id="question-container">
-                <!-- As questões serão inseridas aqui via JavaScript -->
+        <div class="quiz-container" id="quizContainer">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
             </div>
-            
-            <div class="navigation">
-                <button id="prev-btn" disabled>Anterior</button>
-                <button id="next-btn">Próxima</button>
+            <div class="question-counter" id="questionCounter"></div>
+            <div class="category-tag" id="categoryTag"></div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="explanation" id="explanation"></div>
+            <div class="controls">
+                <button class="finish-btn" id="finishBtn">Finalizar Quiz</button>
+                <button class="confirm-btn" id="confirmBtn" disabled>Confirmar</button>
+                <button class="next-btn" id="nextBtn">Próxima</button>
             </div>
         </div>
         
-        <div id="results" class="results">
-            <h2>Seu Resultado</h2>
-            <div class="score">Você acertou <span id="correct-answers">0</span> de <span id="total-answers">40</span> questões!</div>
-            
-            <div id="improvement" class="improvement" style="display: none;">
-                <h3>Área para Melhorar</h3>
-                <p id="improvement-text"></p>
-            </div>
-            
-            <div class="genre-stats">
-                <div class="genre-stat">
-                    <h3>Bilhete</h3>
-                    <p>Acertos: <span id="bilhete-correct">0</span>/10</p>
-                </div>
-                <div class="genre-stat">
-                    <h3>Carta</h3>
-                    <p>Acertos: <span id="carta-correct">0</span>/10</p>
-                </div>
-                <div class="genre-stat">
-                    <h3>Notícia</h3>
-                    <p>Acertos: <span id="noticia-correct">0</span>/10</p>
-                </div>
-                <div class="genre-stat">
-                    <h3>Receita</h3>
-                    <p>Acertos: <span id="receita-correct">0</span>/10</p>
-                </div>
-            </div>
-            
-            <button id="restart-btn" class="restart-btn">Fazer Quiz Novamente</button>
+        <div class="result-screen" id="resultScreen">
+            <h2>Parabéns!</h2>
+            <p>Você completou o quiz!</p>
+            <div class="score-display" id="scoreDisplay"></div>
+            <p id="resultMessage"></p>
+            <button class="restart-btn" id="restartBtn">Fazer Novamente</button>
         </div>
     </div>
 
     <script>
-        // Banco de questões
-        const questions = [
-            // Bilhetes (10 questões)
+        // Configuração do quiz
+        const quizData = [
+            // Parte 1: Diferenças entre tipo textual e gênero textual (5 perguntas)
             {
-                genre: "bilhete",
-                question: "Qual desses textos é um exemplo de bilhete?",
+                category: "Conceitos Básicos",
+                question: "Qual é a principal diferença entre tipo textual e gênero textual?",
                 options: [
-                    "Querida mãe, espero que esta carta te encontre bem...",
-                    "João, por favor, compre pão no caminho de volta. Obrigado! - Maria",
-                    "1. Misture os ingredientes secos. 2. Adicione os líquidos...",
-                    "Segundo fontes próximas, o acidente ocorreu na madrugada..."
+                    "Tipo textual refere-se à estrutura, enquanto gênero textual refere-se ao contexto social",
+                    "Gênero textual refere-se à estrutura, enquanto tipo textual refere-se ao contexto social",
+                    "Não há diferença, os termos são sinônimos",
+                    "Tipo textual é usado apenas na linguagem oral, gênero textual na escrita"
                 ],
-                answer: 1,
-                explanation: "O bilhete é curto, direto e tem função prática de comunicar algo rapidamente."
+                correctAnswer: 0,
+                explanation: "Tipo textual refere-se à estrutura e organização do texto (narrativo, descritivo, argumentativo etc.), enquanto gênero textual está relacionado ao contexto social e propósito comunicativo (carta, notícia, receita etc.)."
             },
             {
-                genre: "bilhete",
-                question: "Qual característica NÃO é típica de um bilhete?",
+                category: "Conceitos Básicos",
+                question: "Qual dos seguintes é um exemplo de tipo textual, não de gênero textual?",
                 options: [
-                    "Linguagem formal e elaborada",
-                    "Breve e objetivo",
-                    "Uso de abreviações",
-                    "Comunicação rápida"
+                    "Narrativo",
+                    "Bilhete",
+                    "Receita culinária",
+                    "Notícia jornalística"
                 ],
-                answer: 0,
-                explanation: "Bilhetes são informais, curtos e objetivos, não exigem linguagem formal."
+                correctAnswer: 0,
+                explanation: "Narrativo é um tipo textual, que descreve uma estrutura com personagens, enredo, etc. Os outros são exemplos de gêneros textuais específicos."
             },
             {
-                genre: "bilhete",
-                question: "Qual elemento geralmente está presente em um bilhete?",
+                category: "Conceitos Básicos",
+                question: "Quantos tipos textuais básicos existem na classificação tradicional?",
                 options: [
-                    "Título chamativo",
-                    "Data e local",
-                    "Assinatura",
-                    "Introdução, desenvolvimento e conclusão"
+                    "3",
+                    "5",
+                    "7",
+                    "10"
                 ],
-                answer: 2,
-                explanation: "Bilhetes geralmente têm uma assinatura para identificar quem escreveu."
+                correctAnswer: 1,
+                explanation: "Os cinco tipos textuais básicos são: narrativo, descritivo, argumentativo, expositivo e injuntivo."
             },
             {
-                genre: "bilhete",
-                question: "Qual situação seria mais adequada para escrever um bilhete?",
+                category: "Conceitos Básicos",
+                question: "Por que é importante distinguir entre tipo textual e gênero textual?",
                 options: [
-                    "Convidar para um casamento",
-                    "Pedir para um colega trazer um documento no dia seguinte",
-                    "Publicar uma opinião no jornal",
-                    "Escrever um relatório de trabalho"
+                    "Porque ajuda a compreender melhor a estrutura e o propósito dos textos",
+                    "Porque é exigido em provas escolares",
+                    "Porque os gêneros textuais estão em desuso",
+                    "Porque os tipos textuais são mais importantes que os gêneros"
                 ],
-                answer: 1,
-                explanation: "Bilhetes são ideais para comunicações rápidas e informais entre pessoas próximas."
+                correctAnswer: 0,
+                explanation: "Entender a diferença ajuda na análise e produção de textos, pois considera tanto sua estrutura (tipo) quanto seu contexto social e função (gênero)."
             },
             {
-                genre: "bilhete",
-                question: "Qual destes é um exemplo de abertura comum em bilhetes?",
+                category: "Conceitos Básicos",
+                question: "Qual afirmação sobre tipos e gêneros textuais é correta?",
                 options: [
-                    "Prezado Senhor Diretor,",
-                    "Caro amigo,",
-                    "À quem interessar possa,",
-                    "Oi! Só pra avisar que..."
+                    "Um mesmo gênero pode utilizar diferentes tipos textuais",
+                    "Um gênero textual sempre usa apenas um tipo textual",
+                    "Tipos textuais são fixos, gêneros nunca mudam",
+                    "Gêneros textuais são apenas para textos literários"
                 ],
-                answer: 3,
-                explanation: "Bilhetes costumam ter aberturas informais e diretas."
+                correctAnswer: 0,
+                explanation: "Um mesmo gênero pode misturar tipos textuais. Por exemplo, uma notícia pode ter partes narrativas (contando os fatos) e descritivas (descrevendo cenários)."
+            },
+            
+            // Parte 2: Conceito de gênero textual (5 perguntas)
+            {
+                category: "Definições",
+                question: "O que define principalmente um gênero textual?",
+                options: [
+                    "Seu propósito comunicativo e contexto social",
+                    "Seu tamanho e número de parágrafos",
+                    "A complexidade de seu vocabulário",
+                    "Seu autor e data de criação"
+                ],
+                correctAnswer: 0,
+                explanation: "Gêneros textuais são definidos principalmente por seu propósito comunicativo e contexto social em que são produzidos e circulam."
             },
             {
-                genre: "bilhete",
-                question: "Qual característica linguística é comum em bilhetes?",
+                category: "Definições",
+                question: "Segundo Bakhtin, os gêneros textuais são:",
                 options: [
-                    "Uso de linguagem técnica",
-                    "Frases longas e complexas",
-                    "Omissão de elementos que podem ser subentendidos",
-                    "Vocabulário rebuscado"
+                    "Relativamente estáveis, mas historicamente mutáveis",
+                    "Fixos e imutáveis desde sua criação",
+                    "Apenas categorias acadêmicas sem relação com a prática",
+                    "Limitados aos textos literários"
                 ],
-                answer: 2,
-                explanation: "Em bilhetes, muitas informações podem ser omitidas pois o contexto é compartilhado."
+                correctAnswer: 0,
+                explanation: "Bakhtin afirma que os gêneros são relativamente estáveis, mas também historicamente mutáveis, evoluindo com as necessidades comunicativas da sociedade."
             },
             {
-                genre: "bilhete",
-                question: "Qual destes elementos NÃO é essencial em um bilhete?",
+                category: "Definições",
+                question: "Qual desses elementos NÃO é essencial para caracterizar um gênero textual?",
                 options: [
+                    "Número exato de palavras",
+                    "Propósito comunicativo",
+                    "Estrutura composicional",
+                    "Estilo linguístico"
+                ],
+                correctAnswer: 0,
+                explanation: "O número exato de palavras não é característica definidora de um gênero, ao contrário dos outros elementos que são essenciais."
+            },
+            {
+                category: "Definições",
+                question: "Como os gêneros textuais se relacionam com as esferas de atividade humana?",
+                options: [
+                    "Cada esfera desenvolve seus próprios gêneros",
+                    "Não há relação entre eles",
+                    "Todos os gêneros servem para todas as esferas",
+                    "Apenas a esfera literária possui gêneros"
+                ],
+                correctAnswer: 0,
+                explanation: "Cada esfera de atividade humana (jurídica, jornalística, cotidiana etc.) desenvolve e utiliza seus próprios gêneros textuais adequados a seus propósitos."
+            },
+            {
+                category: "Definições",
+                question: "Por que novos gêneros textuais surgem?",
+                options: [
+                    "Para atender a novas necessidades comunicativas",
+                    "Porque os antigos se esgotam",
+                    "Por modismo linguístico",
+                    "Por decisão de gramáticos"
+                ],
+                correctAnswer: 0,
+                explanation: "Novos gêneros surgem principalmente para atender a novas necessidades comunicativas que aparecem com o desenvolvimento da sociedade e da tecnologia."
+            },
+            
+            // Parte 3: Gêneros específicos (20 perguntas) - Bilhete, Notícia, Receita, Carta
+            {
+                category: "Bilhete",
+                question: "Qual é a principal característica de um bilhete?",
+                options: [
+                    "Linguagem breve e direta",
+                    "Estrutura formal complexa",
+                    "Uso exclusivo na comunicação empresarial",
+                    "Obrigatoriedade de assinatura reconhecida"
+                ],
+                correctAnswer: 0,
+                explanation: "Bilhetes se caracterizam pela linguagem breve e direta, adequada à comunicação rápida e objetiva."
+            },
+            {
+                category: "Bilhete",
+                question: "Em que situação um bilhete seria mais adequado que uma carta?",
+                options: [
+                    "Para deixar um recado rápido para alguém da casa",
+                    "Para fazer uma reclamação formal a uma empresa",
+                    "Para enviar condolências a um amigo distante",
+                    "Para solicitar documentos oficiais"
+                ],
+                correctAnswer: 0,
+                explanation: "Bilhetes são ideais para comunicações rápidas e informais entre pessoas que têm algum grau de intimidade."
+            },
+            {
+                category: "Bilhete",
+                question: "Qual desses elementos é opcional em um bilhete?",
+                options: [
+                    "Data completa com ano",
                     "Mensagem principal",
                     "Identificação do destinatário",
-                    "Referências bibliográficas",
-                    "Data (quando relevante)"
+                    "Assinatura do remetente"
                 ],
-                answer: 2,
-                explanation: "Referências bibliográficas não fazem parte da estrutura de um bilhete."
+                correctAnswer: 0,
+                explanation: "Em bilhetes informais, a data completa com ano muitas vezes pode ser omitida, sendo substituída por referências como 'hoje' ou 'amanhã'."
             },
             {
-                genre: "bilhete",
-                question: "Qual destes textos NÃO é um bilhete?",
+                category: "Bilhete",
+                question: "Qual linguagem é mais característica de um bilhete?",
                 options: [
-                    "'Volto às 15h. O almoço está na geladeira.'",
-                    "'Favor não esquecer de regar as plantas.'",
-                    "'Prezados clientes, comunicamos que...'",
-                    "'Peguei seu livro emprestado. Devolvo amanhã.'"
+                    "Coloquial e objetiva",
+                    "Culta e rebuscada",
+                    "Técnica e especializada",
+                    "Poética e metafórica"
                 ],
-                answer: 2,
-                explanation: "Este texto é mais formal e parece uma comunicação empresarial, não um bilhete pessoal."
+                correctAnswer: 0,
+                explanation: "A linguagem coloquial e objetiva é típica dos bilhetes, que são gêneros informais de comunicação rápida."
             },
             {
-                genre: "bilhete",
-                question: "Qual é a principal função de um bilhete?",
+                category: "Bilhete",
+                question: "O que diferencia um bilhete de um recado telefônico?",
                 options: [
-                    "Narrar uma história",
-                    "Convencer o leitor de algo",
-                    "Transmitir uma mensagem rápida",
-                    "Descrever um processo"
+                    "O bilhete é um registro escrito",
+                    "O bilhete sempre tem caráter formal",
+                    "O recado telefônico é mais permanente",
+                    "Não há diferença significativa"
                 ],
-                answer: 2,
-                explanation: "A principal função do bilhete é transmitir uma mensagem de forma rápida e prática."
+                correctAnswer: 0,
+                explanation: "A principal diferença é que o bilhete é um registro escrito, enquanto o recado telefônico é oral (mesmo que posteriormente transcrito)."
             },
             {
-                genre: "bilhete",
-                question: "Qual destas características é mais comum em bilhetes?",
+                category: "Notícia",
+                question: "Qual é a estrutura tradicional de uma notícia jornalística?",
                 options: [
-                    "Uso de linguagem figurada",
-                    "Estrutura em parágrafos longos",
-                    "Ausência de pontuação",
-                    "Uso de imperativo"
+                    "Lead + corpo",
+                    "Introdução + desenvolvimento + conclusão",
+                    "Tese + argumentos + contra-argumentos",
+                    "Cabeçalho + itens numerados"
                 ],
-                answer: 3,
-                explanation: "Bilhetes frequentemente usam o modo imperativo para dar instruções rápidas."
-            },
-            
-            // Cartas (10 questões)
-            {
-                genre: "carta",
-                question: "Qual desses textos é um exemplo de carta?",
-                options: [
-                    "Prezado Sr. Silva, agradecemos pelo seu contato e informamos que...",
-                    "Bata as claras em neve e reserve...",
-                    "Acidente na BR-101 deixa três feridos...",
-                    "Ana, não esqueça a reunião às 15h!"
-                ],
-                answer: 0,
-                explanation: "Este texto mostra a estrutura formal típica de uma carta, com vocativo e linguagem adequada."
+                correctAnswer: 0,
+                explanation: "A notícia tradicionalmente segue a estrutura de lead (parágrafo inicial com as informações essenciais) seguido pelo corpo com detalhes."
             },
             {
-                genre: "carta",
-                question: "Qual elemento é essencial em uma carta pessoal mas não em um bilhete?",
+                category: "Notícia",
+                question: "Qual princípio jornalístico é essencial para uma boa notícia?",
                 options: [
-                    "Data",
-                    "Assinatura",
-                    "Saudação inicial",
-                    "Desenvolvimento de ideias"
-                ],
-                answer: 3,
-                explanation: "Cartas pessoais geralmente desenvolvem ideias com mais profundidade que bilhetes."
-            },
-            {
-                genre: "carta",
-                question: "Qual destas fórmulas de tratamento é adequada para uma carta formal?",
-                options: [
-                    "Oi, tudo bem?",
-                    "Cara amiga,",
-                    "Prezado Senhor,",
-                    "Fala, meu chapa!"
-                ],
-                answer: 2,
-                explanation: "'Prezado Senhor' é uma fórmula de tratamento adequada para cartas formais."
-            },
-            {
-                genre: "carta",
-                question: "Qual parte NÃO faz parte da estrutura básica de uma carta?",
-                options: [
-                    "Local e data",
-                    "Vocativo",
-                    "Corpo do texto",
-                    "Lista de ingredientes"
-                ],
-                answer: 3,
-                explanation: "Lista de ingredientes é característica de receitas, não de cartas."
-            },
-            {
-                genre: "carta",
-                question: "Qual é a principal diferença entre uma carta pessoal e uma formal?",
-                options: [
-                    "A carta pessoal sempre é mais longa",
-                    "A carta formal não tem data",
-                    "A carta formal usa linguagem mais impessoal e estruturada",
-                    "A carta pessoal não precisa de assinatura"
-                ],
-                answer: 2,
-                explanation: "A linguagem impessoal e a estrutura rígida são marcas das cartas formais."
-            },
-            {
-                genre: "carta",
-                question: "Qual destes é um exemplo de despedida adequada para uma carta formal?",
-                options: [
-                    "Beijos,",
-                    "Atenciosamente,",
-                    "Falou, valeu!",
-                    "Até mais,"
-                ],
-                answer: 1,
-                explanation: "'Atenciosamente' é uma forma adequada de despedida em cartas formais."
-            },
-            {
-                genre: "carta",
-                question: "Em qual situação seria mais adequado escrever uma carta em vez de um bilhete?",
-                options: [
-                    "Pedir para um colega trazer café",
-                    "Expressar condolências por uma perda",
-                    "Lembrar sobre uma reunião no dia seguinte",
-                    "Avisar que chegou em casa"
-                ],
-                answer: 1,
-                explanation: "Situações que exigem mais sensibilidade e desenvolvimento são mais adequadas para cartas."
-            },
-            {
-                genre: "carta",
-                question: "Qual destas características é típica de cartas pessoais?",
-                options: [
-                    "Uso de linguagem técnica",
-                    "Expressão de sentimentos e experiências pessoais",
-                    "Estrutura rígida e impessoal",
-                    "Ausência de vocativo"
-                ],
-                answer: 1,
-                explanation: "Cartas pessoais são marcadas pela expressão de sentimentos e vivências."
-            },
-            {
-                genre: "carta",
-                question: "Qual informação geralmente vem no cabeçalho de uma carta?",
-                options: [
-                    "Local e data",
-                    "Nome do destinatário",
-                    "Assinatura",
-                    "Pós-escrito"
-                ],
-                answer: 0,
-                explanation: "O local e a data são informações que geralmente iniciam uma carta."
-            },
-            {
-                genre: "carta",
-                question: "Qual destes textos NÃO é uma carta?",
-                options: [
-                    "'Querida avó, como vai? Espero que esteja bem...'",
-                    "'Senhor diretor, venho por meio desta solicitar...'",
-                    "'Misture os ingredientes secos e depois...'",
-                    "'Caro amigo, recebi sua última carta com alegria...'"
-                ],
-                answer: 2,
-                explanation: "Este texto é uma receita, não uma carta."
-            },
-            
-            // Notícias (10 questões)
-            {
-                genre: "notícia",
-                question: "Qual desses textos é um exemplo de notícia?",
-                options: [
-                    "Querido diário, hoje foi um dia difícil...",
-                    "Temperatura do forno: 180 graus. Tempo: 40 minutos.",
-                    "Prefeito anuncia novas medidas para o trânsito no centro",
-                    "Caro cliente, seu pedido foi enviado hoje."
-                ],
-                answer: 2,
-                explanation: "Este texto relata um fato de interesse público, característica principal de notícias."
-            },
-            {
-                genre: "notícia",
-                question: "Qual elemento é essencial em uma notícia?",
-                options: [
-                    "Opinião do autor",
-                    "Lead (lide) com as informações principais",
-                    "Expressão de sentimentos",
-                    "Instruções passo a passo"
-                ],
-                answer: 1,
-                explanation: "O lead ou lide contém as informações essenciais da notícia (o quê, quem, quando, onde, como, por quê)."
-            },
-            {
-                genre: "notícia",
-                question: "Qual característica NÃO é típica de notícias?",
-                options: [
-                    "Linguagem objetiva",
-                    "Estrutura em pirâmide invertida",
-                    "Uso de primeira pessoa",
-                    "Fatos verificáveis"
-                ],
-                answer: 2,
-                explanation: "Notícias geralmente evitam o uso de primeira pessoa, mantendo impessoalidade."
-            },
-            {
-                genre: "notícia",
-                question: "Qual destes seria um bom título para uma notícia?",
-                options: [
-                    "Minha opinião sobre a política atual",
-                    "Como fazer um bolo de chocolate",
-                    "Chuva intensa causa alagamentos no centro da cidade",
-                    "Querida mamãe, saudades de você"
-                ],
-                answer: 2,
-                explanation: "Este título resume um fato recente e de interesse público, característica de notícias."
-            },
-            {
-                genre: "notícia",
-                question: "Qual é a principal função de uma notícia?",
-                options: [
-                    "Expressar sentimentos do autor",
-                    "Informar sobre fatos relevantes",
-                    "Instruir sobre como fazer algo",
-                    "Convencer o leitor de uma opinião"
-                ],
-                answer: 1,
-                explanation: "A principal função da notícia é informar sobre fatos relevantes para o público."
-            },
-            {
-                genre: "notícia",
-                question: "Qual destes elementos NÃO é comum em notícias?",
-                options: [
-                    "Data e local do fato",
-                    "Fontes de informação",
-                    "Ingredientes e modo de preparo",
-                    "Fotos ilustrativas"
-                ],
-                answer: 2,
-                explanation: "Ingredientes e modo de preparo são características de receitas, não de notícias."
-            },
-            {
-                genre: "notícia",
-                question: "Qual característica linguística é marcante em notícias?",
-                options: [
-                    "Uso de linguagem subjetiva",
-                    "Frases na primeira pessoa",
-                    "Verbos predominantemente no presente do indicativo",
-                    "Abundância de adjetivos"
-                ],
-                answer: 2,
-                explanation: "Notícias frequentemente usam o presente do indicativo para dar sensação de atualidade."
-            },
-            {
-                genre: "notícia",
-                question: "Qual destes textos NÃO é uma notícia?",
-                options: [
-                    "'Acidente na BR-101 deixa dois feridos nesta manhã...'",
-                    "'Prefeitura inaugura novo parque no bairro Central...'",
-                    "'Querida prima, como vão as coisas por aí?...'",
-                    "'Câmara aprova nova lei sobre zoneamento urbano...'"
-                ],
-                answer: 2,
-                explanation: "Este texto é uma carta pessoal, não uma notícia."
-            },
-            {
-                genre: "notícia",
-                question: "Qual é a estrutura típica de uma notícia?",
-                options: [
-                    "Introdução, desenvolvimento e conclusão",
-                    "Pirâmide invertida (do mais para o menos importante)",
-                    "Lista numerada de instruções",
-                    "Diálogo entre personagens"
-                ],
-                answer: 1,
-                explanation: "Notícias geralmente seguem a estrutura de pirâmide invertida."
-            },
-            {
-                genre: "notícia",
-                question: "Qual destas informações normalmente aparece no lead de uma notícia?",
-                options: [
+                    "Objetividade",
                     "Opinião do repórter",
-                    "Todos os detalhes do acontecimento",
-                    "As informações essenciais (o quê, quem, quando, onde)",
-                    "A biografia completa dos envolvidos"
+                    "Linguagem literária",
+                    "Uso de metáforas"
                 ],
-                answer: 2,
-                explanation: "O lead contém as informações essenciais sobre o fato noticiado."
+                correctAnswer: 0,
+                explanation: "A objetividade é um princípio fundamental do jornalismo, especialmente em notícias, que devem apresentar fatos de forma imparcial."
             },
-            
-            // Receitas (10 questões)
             {
-                genre: "receita",
-                question: "Qual desses textos é um exemplo de receita?",
+                category: "Notícia",
+                question: "O que deve responder o lead de uma notícia?",
                 options: [
-                    "Caro amigo, como vai? Espero que bem...",
-                    "Acidente na avenida principal causa congestionamento...",
-                    "Bolo de chocolate: 2 xícaras de farinha, 1 xícara de açúcar...",
-                    "Por favor, compre leite no mercado."
+                    "O quê, quem, quando, onde, como e por quê",
+                    "Apenas o quê e quem",
+                    "Apenas a opinião do jornal",
+                    "Detalhes secundários do fato"
                 ],
-                answer: 2,
-                explanation: "Este texto lista ingredientes e modo de preparo, característica de receitas."
+                correctAnswer: 0,
+                explanation: "O lead ideal responde às seis perguntas básicas: o quê, quem, quando, onde, como e por quê (os 5W1H do jornalismo)."
             },
             {
-                genre: "receita",
-                question: "Qual elemento é essencial em uma receita?",
+                category: "Notícia",
+                question: "Qual desses elementos NÃO é característico de uma notícia?",
+                options: [
+                    "Opinião explícita do autor",
+                    "Título objetivo",
+                    "Parágrafos curtos",
+                    "Fontes de informação"
+                ],
+                correctAnswer: 0,
+                explanation: "Notícias devem evitar opiniões explícitas do autor, mantendo-se imparciais e baseadas em fatos e declarações de fontes."
+            },
+            {
+                category: "Notícia",
+                question: "Por que as notícias geralmente usam a ordem inversa da pirâmide?",
+                options: [
+                    "Para apresentar as informações mais importantes primeiro",
+                    "Para criar suspense no leitor",
+                    "Para economizar espaço no jornal",
+                    "Por tradição histórica sem motivo prático"
+                ],
+                correctAnswer: 0,
+                explanation: "A pirâmide invertida coloca as informações mais importantes no início, permitindo que o leitor capte o essencial mesmo se não ler a matéria completa."
+            },
+            {
+                category: "Receita",
+                question: "Qual é a finalidade principal de uma receita culinária?",
+                options: [
+                    "Instruir sobre como preparar um prato",
+                    "Narrar a história de um prato",
+                    "Argumentar sobre vantagens de uma dieta",
+                    "Descrever poeticamente alimentos"
+                ],
+                correctAnswer: 0,
+                explanation: "A receita culinária tem como principal função instruir sobre o preparo de um prato, sendo portanto um gênero injuntivo."
+            },
+            {
+                category: "Receita",
+                question: "Qual desses elementos é essencial em uma receita?",
                 options: [
                     "Lista de ingredientes",
-                    "Opinião do autor",
-                    "Narrativa em primeira pessoa",
-                    "Análise de fatos recentes"
+                    "História do prato",
+                    "Opinião do chef",
+                    "Comparação com outras receitas"
                 ],
-                answer: 0,
-                explanation: "A lista de ingredientes é parte fundamental de qualquer receita."
+                correctAnswer: 0,
+                explanation: "A lista de ingredientes é elemento essencial, junto com o modo de preparo, para que a receita cumpra sua função instrucional."
             },
             {
-                genre: "receita",
-                question: "Qual característica linguística é marcante em receitas?",
+                category: "Receita",
+                question: "Que tipo de verbo é mais usado no modo de preparo de receitas?",
                 options: [
-                    "Uso de imperativo",
-                    "Linguagem extremamente formal",
-                    "Abundância de metáforas",
-                    "Estrutura em pirâmide invertida"
+                    "Verbos no imperativo",
+                    "Verbos no futuro do pretérito",
+                    "Verbos no presente do subjuntivo",
+                    "Verbos no infinitivo"
                 ],
-                answer: 0,
-                explanation: "Receitas frequentemente usam o modo imperativo para dar instruções."
+                correctAnswer: 0,
+                explanation: "Receitas normalmente usam verbos no imperativo (ou infinitivo em algumas variações) para dar instruções diretas: 'Corte', 'Misture', 'Leve ao forno'."
             },
             {
-                genre: "receita",
-                question: "Qual destes textos NÃO é uma receita?",
+                category: "Receita",
+                question: "Por que as receitas costumam listar os ingredientes antes do modo de preparo?",
                 options: [
-                    "'Misture os ingredientes secos. Acrescente os ovos...'",
-                    "'Despeje a massa em forma untada. Asse por 40 minutos...'",
-                    "'Prezado cliente, seu pedido foi enviado...'",
-                    "'Bata as claras em neve. Adicione o açúcar aos poucos...'"
+                    "Para que a pessoa possa verificar se tem tudo antes de começar",
+                    "Porque é uma regra gramatical",
+                    "Para ocupar mais espaço na página",
+                    "Por tradição, sem motivo prático"
                 ],
-                answer: 2,
-                explanation: "Este texto é uma comunicação comercial, não uma receita."
+                correctAnswer: 0,
+                explanation: "Listar ingredientes primeiro permite verificação prévia de disponibilidade e preparação (como medir quantidades) antes de iniciar o preparo."
             },
             {
-                genre: "receita",
-                question: "Qual informação geralmente vem no título de uma receita?",
+                category: "Receita",
+                question: "Qual dessas informações pode aparecer em uma receita, mas não é essencial?",
                 options: [
-                    "Tempo total de preparo",
-                    "Nome do prato a ser preparado",
-                    "Lista completa de utensílios",
-                    "Biografia do chef"
+                    "Tempo de preparo aproximado",
+                    "Lista de ingredientes",
+                    "Quantidades precisas",
+                    "Etapas do preparo"
                 ],
-                answer: 1,
-                explanation: "O título da receita geralmente indica o nome do prato ou preparo."
+                correctAnswer: 0,
+                explanation: "Embora útil, o tempo de preparo é informação complementar. Os outros itens são essenciais para a receita cumprir sua função."
             },
             {
-                genre: "receita",
-                question: "Qual é a principal função de uma receita?",
+                category: "Carta",
+                question: "Qual é a principal diferença entre carta pessoal e carta formal?",
                 options: [
-                    "Narrar uma história",
-                    "Informar sobre fatos recentes",
-                    "Instruir sobre como preparar um prato",
-                    "Expressar sentimentos"
+                    "O nível de formalidade da linguagem",
+                    "O uso obrigatório de envelope",
+                    "A necessidade de assinatura",
+                    "O tamanho do texto"
                 ],
-                answer: 2,
-                explanation: "A principal função da receita é instruir sobre o preparo de alimentos."
+                correctAnswer: 0,
+                explanation: "A principal diferença está no nível de formalidade da linguagem, sendo a pessoal mais coloquial e a formal mais impessoal e estruturada."
             },
             {
-                genre: "receita",
-                question: "Qual destes elementos pode aparecer em uma receita mas não em uma notícia?",
+                category: "Carta",
+                question: "Qual desses elementos é essencial em uma carta formal?",
                 options: [
-                    "Tempo de preparo",
-                    "Data do acontecimento",
-                    "Nome das fontes consultadas",
-                    "Local do evento"
+                    "Local e data no cabeçalho",
+                    "Saudação inicial afetuosa",
+                    "Uso de gírias e expressões populares",
+                    "Assinatura com apelido"
                 ],
-                answer: 0,
-                explanation: "O tempo de preparo é informação específica de receitas."
+                correctAnswer: 0,
+                explanation: "Em cartas formais, o cabeçalho com local e data é essencial, assim como a estrutura adequada e linguagem impessoal."
             },
             {
-                genre: "receita",
-                question: "Qual característica NÃO é típica de receitas?",
+                category: "Carta",
+                question: "Em qual situação uma carta seria mais adequada que um e-mail?",
                 options: [
-                    "Lista numerada de passos",
-                    "Uso de linguagem subjetiva",
-                    "Indicação de quantidades",
-                    "Verbos no modo imperativo"
+                    "Comunicação oficial a um órgão governamental",
+                    "Convite para festa de amigos próximos",
+                    "Combinar um encontro casual",
+                    "Perguntar sobre o horário de uma aula"
                 ],
-                answer: 1,
-                explanation: "Receitas são objetivas e práticas, não usam linguagem subjetiva."
+                correctAnswer: 0,
+                explanation: "Algumas instituições ainda exigem comunicações oficiais por carta, especialmente em contextos jurídicos ou governamentais formais."
             },
             {
-                genre: "receita",
-                question: "Em qual seção de um jornal você provavelmente encontraria receitas?",
+                category: "Carta",
+                question: "Qual frase seria mais adequada para encerrar uma carta formal?",
                 options: [
-                    "Política",
-                    "Esportes",
-                    "Culinária",
-                    "Classificados"
+                    "Atenciosamente,",
+                    "Abraços,",
+                    "Falou,",
+                    "Até mais ver,"
                 ],
-                answer: 2,
-                explanation: "Receitas são encontradas na seção de culinária ou gastronomia."
+                correctAnswer: 0,
+                explanation: "'Atenciosamente' é a forma padrão de encerramento em cartas formais, mantendo o tom respeitoso e profissional."
             },
             {
-                genre: "receita",
-                question: "Qual destas informações pode constar em uma receita?",
+                category: "Carta",
+                question: "O que caracteriza uma carta de reclamação?",
                 options: [
-                    "Rendimento (quantas porções)",
-                    "Opinião política do chef",
-                    "Análise econômica do país",
-                    "História de vida dos ingredientes"
+                    "Exposição objetiva de um problema e solicitação de solução",
+                    "Narração detalhada de sentimentos pessoais",
+                    "Crítica genérica sem propostas",
+                    "Linguagem agressiva e ameaçadora"
                 ],
-                answer: 0,
-                explanation: "O rendimento (número de porções) é informação prática comum em receitas."
+                correctAnswer: 0,
+                explanation: "Cartas de reclamação eficazes apresentam o problema de forma objetiva e clara, solicitando uma solução específica, mantendo o respeito."
             }
         ];
 
-        // Embaralhar as questões
+        // Elementos do DOM
+        const startScreen = document.getElementById('startScreen');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultScreen = document.getElementById('resultScreen');
+        const startBtn = document.getElementById('startBtn');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const finishBtn = document.getElementById('finishBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const progressBar = document.getElementById('progressBar');
+        const questionCounter = document.getElementById('questionCounter');
+        const categoryTag = document.getElementById('categoryTag');
+        const explanationElement = document.getElementById('explanation');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const resultMessage = document.getElementById('resultMessage');
+
+        // Variáveis do quiz
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let answered = false;
+
+        // Iniciar quiz
+        startBtn.addEventListener('click', startQuiz);
+        restartBtn.addEventListener('click', startQuiz);
+
+        // Controles do quiz
+        confirmBtn.addEventListener('click', confirmAnswer);
+        nextBtn.addEventListener('click', nextQuestion);
+        finishBtn.addEventListener('click', finishQuiz);
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            // Embaralhar perguntas
+            shuffleArray(quizData);
+            
+            startScreen.style.display = 'none';
+            resultScreen.style.display = 'none';
+            quizContainer.style.display = 'block';
+            
+            // Adicionar classe active após um pequeno delay para acionar a animação
+            setTimeout(() => {
+                quizContainer.classList.add('active');
+            }, 10);
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            // Atualizar contador de progresso
+            const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            questionCounter.textContent = `Pergunta ${currentQuestionIndex + 1} de ${quizData.length}`;
+            categoryTag.textContent = currentQuestion.category;
+            
+            questionElement.textContent = currentQuestion.question;
+            explanationElement.textContent = currentQuestion.explanation;
+            
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option');
+                button.textContent = option;
+                button.addEventListener('click', () => selectOption(index));
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            answered = false;
+            selectedOption = null;
+            explanationElement.classList.remove('show');
+            nextBtn.style.display = 'none';
+            confirmBtn.disabled = true;
+            confirmBtn.style.display = 'block';
+            
+            while (optionsElement.firstChild) {
+                optionsElement.removeChild(optionsElement.firstChild);
+            }
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+            
+            // Desselecionar qualquer opção anterior
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Selecionar nova opção
+            selectedOption = index;
+            options[index].classList.add('selected');
+            confirmBtn.disabled = false;
+        }
+
+        function confirmAnswer() {
+            if (selectedOption === null || answered) return;
+            
+            answered = true;
+            const currentQuestion = quizData[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            // Mostrar qual estava correta e se acertou
+            options[currentQuestion.correctAnswer].classList.add('correct');
+            
+            if (selectedOption !== currentQuestion.correctAnswer) {
+                options[selectedOption].classList.add('incorrect');
+            } else {
+                score++;
+            }
+            
+            // Mostrar explicação
+            explanationElement.classList.add('show');
+            
+            // Mostrar botão de próxima pergunta
+            confirmBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizData.length) {
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            quizContainer.classList.remove('active');
+            
+            setTimeout(() => {
+                quizContainer.style.display = 'none';
+                resultScreen.style.display = 'flex';
+                
+                // Calcular porcentagem de acertos
+                const percentage = Math.round((score / quizData.length) * 100);
+                
+                scoreDisplay.textContent = `${score}/${quizData.length}`;
+                
+                // Mensagem personalizada baseada no desempenho
+                if (percentage >= 90) {
+                    resultMessage.textContent = "Excelente! Você domina os gêneros textuais!";
+                } else if (percentage >= 70) {
+                    resultMessage.textContent = "Muito bom! Você tem um bom conhecimento sobre gêneros textuais!";
+                } else if (percentage >= 50) {
+                    resultMessage.textContent = "Bom! Com mais estudo você pode melhorar ainda mais!";
+                } else {
+                    resultMessage.textContent = "Continue estudando! A prática leva à perfeição!";
+                }
+                
+                // Criar confetes
+                createConfetti();
+            }, 500);
+        }
+
+        function createConfetti() {
+            const colors = ['#58a700', '#4d9500', '#6bbd00', '#7cc700', '#8fd400', '#a0e000'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = `${Math.random() * 10 + 5}px`;
+                confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                resultScreen.appendChild(confetti);
+            }
+        }
+
+        // Função para embaralhar array (Fisher-Yates algorithm)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -775,243 +926,6 @@
             }
             return array;
         }
-
-        // Variáveis do quiz
-        let shuffledQuestions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let genreScores = {
-            "bilhete": 0,
-            "carta": 0,
-            "notícia": 0,
-            "receita": 0
-        };
-        let userAnswers = Array(questions.length).fill(null);
-
-        // Elementos do DOM
-        const startScreen = document.getElementById('start-screen');
-        const quizContainer = document.getElementById('quiz-container');
-        const questionContainer = document.getElementById('question-container');
-        const currentQuestionElement = document.getElementById('current-question');
-        const totalQuestionsElement = document.getElementById('total-questions');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const resultsContainer = document.getElementById('results');
-        const correctAnswersElement = document.getElementById('correct-answers');
-        const totalAnswersElement = document.getElementById('total-answers');
-        const improvementContainer = document.getElementById('improvement');
-        const improvementText = document.getElementById('improvement-text');
-        const bilheteCorrect = document.getElementById('bilhete-correct');
-        const cartaCorrect = document.getElementById('carta-correct');
-        const noticiaCorrect = document.getElementById('noticia-correct');
-        const receitaCorrect = document.getElementById('receita-correct');
-        const startBtn = document.getElementById('start-btn');
-        const restartBtn = document.getElementById('restart-btn');
-
-        // Iniciar o quiz
-        startBtn.addEventListener('click', startQuiz);
-        restartBtn.addEventListener('click', startQuiz);
-
-        function startQuiz() {
-            // Embaralhar questões
-            shuffledQuestions = shuffleArray([...questions]);
-            
-            // Resetar variáveis
-            currentQuestionIndex = 0;
-            score = 0;
-            genreScores = {
-                "bilhete": 0,
-                "carta": 0,
-                "notícia": 0,
-                "receita": 0
-            };
-            userAnswers = Array(questions.length).fill(null);
-            
-            // Mostrar quiz container
-            startScreen.style.display = 'none';
-            resultsContainer.style.display = 'none';
-            quizContainer.style.display = 'block';
-            
-            // Atualizar contador de questões
-            totalQuestionsElement.textContent = shuffledQuestions.length;
-            
-            // Mostrar primeira questão
-            showQuestion();
-        }
-
-        function showQuestion() {
-            // Atualizar contador
-            currentQuestionElement.textContent = currentQuestionIndex + 1;
-            
-            // Obter questão atual
-            const question = shuffledQuestions[currentQuestionIndex];
-            
-            // Criar HTML da questão
-            let questionHTML = `
-                <div class="question">
-                    <div class="question-text">${question.question}</div>
-                    <div class="options">
-            `;
-            
-            // Adicionar opções
-            question.options.forEach((option, index) => {
-                let optionClass = 'option';
-                
-                // Verificar se usuário já respondeu
-                if (userAnswers[currentQuestionIndex] !== null) {
-                    if (index === question.answer) {
-                        optionClass += ' correct';
-                    } else if (userAnswers[currentQuestionIndex] === index && index !== question.answer) {
-                        optionClass += ' wrong';
-                    }
-                }
-                
-                questionHTML += `
-                    <div class="${optionClass}" data-index="${index}">
-                        ${option}
-                    </div>
-                `;
-            });
-            
-            questionHTML += `</div>`;
-            
-            // Adicionar feedback se respondido
-            if (userAnswers[currentQuestionIndex] !== null) {
-                const isCorrect = userAnswers[currentQuestionIndex] === question.answer;
-                questionHTML += `
-                    <div class="feedback ${isCorrect ? 'correct' : 'wrong'}">
-                        ${isCorrect ? '✓ Correto!' : '✗ Incorreto!'} ${question.explanation}
-                    </div>
-                `;
-            }
-            
-            questionHTML += `</div>`;
-            
-            // Inserir no DOM
-            questionContainer.innerHTML = questionHTML;
-            
-            // Adicionar event listeners às opções
-            document.querySelectorAll('.option').forEach(option => {
-                option.addEventListener('click', selectAnswer);
-            });
-            
-            // Atualizar botões de navegação
-            prevBtn.disabled = currentQuestionIndex === 0;
-            
-            // Verificar se é a última questão
-            if (currentQuestionIndex === shuffledQuestions.length - 1) {
-                nextBtn.textContent = 'Ver Resultados';
-            } else {
-                nextBtn.textContent = 'Próxima';
-            }
-        }
-
-        function selectAnswer(e) {
-            // Só permitir resposta se não tiver respondido ainda
-            if (userAnswers[currentQuestionIndex] !== null) return;
-            
-            const selectedOption = e.currentTarget;
-            const selectedIndex = parseInt(selectedOption.getAttribute('data-index'));
-            const question = shuffledQuestions[currentQuestionIndex];
-            
-            // Marcar resposta do usuário
-            userAnswers[currentQuestionIndex] = selectedIndex;
-            
-            // Verificar se acertou
-            const isCorrect = selectedIndex === question.answer;
-            
-            // Atualizar pontuação
-            if (isCorrect) {
-                score++;
-                genreScores[question.genre]++;
-            }
-            
-            // Mostrar feedback
-            showQuestion();
-            
-            // Se for a última questão e o usuário respondeu, mostrar resultados
-            if (currentQuestionIndex === shuffledQuestions.length - 1) {
-                nextBtn.textContent = 'Ver Resultados';
-            }
-        }
-
-        // Navegação entre questões
-        prevBtn.addEventListener('click', () => {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                showQuestion();
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            // Verificar se respondeu a questão atual (exceto na última)
-            if (userAnswers[currentQuestionIndex] === null && currentQuestionIndex !== shuffledQuestions.length - 1) {
-                alert('Por favor, responda a questão antes de continuar.');
-                return;
-            }
-            
-            if (currentQuestionIndex < shuffledQuestions.length - 1) {
-                currentQuestionIndex++;
-                showQuestion();
-            } else {
-                // Mostrar resultados
-                showResults();
-            }
-        });
-
-        function showResults() {
-            // Esconder quiz, mostrar resultados
-            quizContainer.style.display = 'none';
-            resultsContainer.style.display = 'block';
-            
-            // Atualizar pontuação geral
-            correctAnswersElement.textContent = score;
-            totalAnswersElement.textContent = shuffledQuestions.length;
-            
-            // Atualizar pontuação por gênero
-            bilheteCorrect.textContent = genreScores.bilhete;
-            cartaCorrect.textContent = genreScores.carta;
-            noticiaCorrect.textContent = genreScores["notícia"];
-            receitaCorrect.textContent = genreScores.receita;
-            
-            // Determinar qual gênero precisa melhorar
-            const genres = [
-                {name: "bilhete", score: genreScores.bilhete},
-                {name: "carta", score: genreScores.carta},
-                {name: "notícia", score: genreScores["notícia"]},
-                {name: "receita", score: genreScores.receita}
-            ];
-            
-            // Ordenar do menor para o maior score
-            genres.sort((a, b) => a.score - b.score);
-            
-            // Mostrar sugestão de melhora
-            if (genres[0].score < 5) { // Se acertou menos da metade
-                improvementContainer.style.display = 'block';
-                
-                let genreName;
-                switch(genres[0].name) {
-                    case "bilhete":
-                        genreName = "bilhetes";
-                        improvementText.textContent = "Você pode melhorar identificando bilhetes. Eles são textos curtos, informais e com função prática de comunicação rápida entre pessoas próximas.";
-                        break;
-                    case "carta":
-                        genreName = "cartas";
-                        improvementText.textContent = "Foque em estudar cartas. Elas podem ser pessoais (linguagem afetiva) ou formais (estrutura rígida e linguagem polida), mas sempre com desenvolvimento de ideias mais extenso que bilhetes.";
-                        break;
-                    case "notícia":
-                        genreName = "notícias";
-                        improvementText.textContent = "Pratique mais a identificação de notícias. Elas informam sobre fatos recentes de interesse público, com linguagem objetiva e estrutura em pirâmide invertida.";
-                        break;
-                    case "receita":
-                        genreName = "receitas";
-                        improvementText.textContent = "Estude mais receitas. Elas têm lista de ingredientes e modo de preparo, com verbos no imperativo e linguagem prática e objetiva.";
-                        break;
-                }
-            } else {
-                improvementContainer.style.display = 'none';
-            }
-        }
     </script>
 </body>
-  </html>
+</html>
